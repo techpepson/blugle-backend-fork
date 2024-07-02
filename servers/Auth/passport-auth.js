@@ -27,10 +27,17 @@ passport.use(
           return done(null, false, { message: "User already exists" });
         }
         //store the user details in the database if the user does not exist
-        const { userEmail, userAddress, userPhone } = req.body;
+        const {
+          userEmail,
+          userAddress,
+          userPhone,
+          userFirstName,
+          userLastName,
+        } = req.body;
 
         const saveUserDetails = new User({
-          userName,
+          userFirstName,
+          userLastName,
           //store encrypted password in the database rather than the original password.
           userPassword: encryptedPassword,
           userEmail,

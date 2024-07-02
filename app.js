@@ -1,7 +1,7 @@
 import express from "express";
 import session from "express-session";
 import passport from "passport";
-import csurf from "csurf";
+import axios from "axios";
 import { User } from "./Model/userDetailsModel.js";
 import { connectDB } from "./databases/dbConnect.js";
 import { configDotenv } from "dotenv";
@@ -104,6 +104,69 @@ app.post("/api/logout", (req, res) => {
       res.status(200).send("You have been signed out successfully");
     });
   });
+});
+
+//paystack integration route definition
+
+app.post("/paystack/initialize-transaction", async (req, res) => {
+  const { amount, email } = req.body;
+
+  try {
+    const response = await axios.post(
+      "https://api.paystack.co/transaction/initialize",
+      { amount, email, channels: ["mobile_money", "card"] },
+      {
+        headers: {
+          Authorization: `Bearer sk_test_d510231535ea62d7708835134b7fe472798b8314`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const payStackResponse = response.data;
+    if (payStackResponse.status) {
+      res.status(200).json({ data: payStackResponse.data });
+    } else {
+      res
+        .status(400)
+        .json({
+          message: "Initialization failed",
+          data: payStackResponse.data,
+        });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "There was an error processing your request",
+      error: error.message,
+    });
+  }
+});
+
+//payment verification path definition
+
+app.get("/paystack/verify/:reference", async (req, res) => {
+  const { reference } = req.params;
+  try {
+    const responseFromFetch = await axios.get(
+      `https://api.paystack.co/transaction/verify/:${reference}`,
+      {
+        headers: {
+          Authorization: `Bearer sk_test_d510231535ea62d7708835134b7fe472798b8314`,
+        },
+      }
+    );
+    const response = responseFromFetch.data; //return everything in the data returned from the paystack API and clients can filter them as they wish
+    if (responseFromFetch.status) {
+      res.status(200).json({ data: response.data });
+    } else {
+      res.status(500).json({ message: "Verification failed", data: response });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "There was an error processing your request",
+      error: error.message,
+    });
+  }
 });
 
 app.listen(PORT, () => {
