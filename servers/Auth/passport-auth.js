@@ -1,98 +1,118 @@
-import { User } from "../../Model/userDetailsModel.js";
-import passport from "passport";
-import LocalStrategy from "passport-local";
-import bcrypt from "bcrypt";
+// import { User } from "../../Model/userDetailsModel.js";
+// import passport from "passport";
+// import LocalStrategy from "passport-local";
+// import bcrypt from "bcrypt";
 
-//create the passport for the signup
-passport.use(
-  "local-signup",
-  new LocalStrategy(
-    {
-      usernameField: "userName",
-      passwordField: "userPassword",
-      passReqToCallback: true,
-    },
+// //create the passport for the signup
+// passport.use(
+//   "local",
+//   new LocalStrategy.Strategy(
+//     {
+//       usernameField: "userName",
+//       passwordField: "userPassword",
+//       passReqToCallback: true,
+//     },
 
-    async (req, userName, userPassword, done) => {
-      try {
-        //get user details to make sure the user does not exist in the database
-        const getUserDetails = await User.findOne({ userName });
-        //encrypt user password for safety
-        const genSalt = 10;
-        const encryptedPassword = await bcrypt.hash(userPassword, genSalt);
-        //get user password
-        const getUserPass = getUserDetails.userPassword;
-        const comparePassword = await bcrypt.compare(userPassword, getUserPass);
-        if (getUserDetails || comparePassword) {
-          return done(null, false, { message: "User already exists" });
-        }
-        //store the user details in the database if the user does not exist
-        const {
-          userEmail,
-          userAddress,
-          userPhone,
-          userFirstName,
-          userLastName,
-        } = req.body;
+//     async (req, userName, userPassword, done) => {
+//       try {
+//         //get user details to make sure the user does not exist in the database
+//         const getUserDetails = await User.findOne({ userName });
 
-        const saveUserDetails = new User({
-          userFirstName,
-          userLastName,
-          //store encrypted password in the database rather than the original password.
-          userPassword: encryptedPassword,
-          userEmail,
-          userAddress,
-          userPhone,
-        });
-        //save the user details
-        await saveUserDetails.save();
-        return done(null, saveUserDetails);
-      } catch (error) {
-        return done(error, false, { message: "Your details cannot be saved" });
-      }
-    }
-  )
-);
+//         //encrypt user password for safety
+//         const genSalt = 10;
+//         const salt = await bcrypt.genSalt(genSalt);
+//         const encryptedPassword = await bcrypt.hash(userPassword, salt);
+//         //get user password
+//         const userPass = getUserDetails?.userPassword;
+//         const comparePassword =
+//           userPass && (await bcrypt.compare(userPass, encryptedPassword));
+//         if (getUserDetails || comparePassword) {
+//           return done(null, false, { message: "User already exists" });
+//         }
 
-//sign in passport
-passport.use(
-  "local-login",
-  new LocalStrategy(
-    {
-      usernameField: "userSigninName",
-      passwordField: "userSigninPassword",
-      passReqToCallback: true,
-    },
+//         //get the user details from the request body
+//         // const {
+//         //   userFirstName,
+//         //   userLastName,
+//         //   userEmail,
+//         //   userPhone,
+//         //   userAddress,
+//         // } = req.body;
 
-    async (userSigninName, userSigninPassword, done) => {
-      try {
-        //get user details from the database
-        const user = await User.findOne({ userName: userSigninName });
-        //get userPassword
-        const userPass = user.userPassword;
-        //check if the user is in the database
-        if (!user) {
-          return done(null, false, {
-            message: "The username or password entered is not correct!",
-          });
-        }
-        done(null, user);
-        const decryptedPassword = await bcrypt.compare(
-          userSigninPassword,
-          userPass
-        );
-        if (decryptedPassword) {
-          return done(null, user);
-        } else {
-          return done(null, false, {
-            message: "The username or password entered is not correct!",
-          });
-        }
-      } catch (error) {
-        return done(error, false, {
-          message: "There was a problem signing you in",
-        });
-      }
-    }
-  )
-);
+//         const savedUserDetails = new User({
+//           userFirstName: req.body.userFirstName,
+//           userLastName: req.body.userLastName,
+//           //store encrypted password in the database rather than the original password.
+//           userPassword: encryptedPassword,
+//           userEmail: req.body.userEmail,
+//           userAddress: req.body.userAddress,
+//           userPhone: req.body.userPhone,
+//           userName,
+//           userRole,
+//         });
+//         //save the user details
+//         await savedUserDetails.save();
+//         return done(null, savedUserDetails);
+//       } catch (error) {
+//         return done(error, false, { message: "Your details cannot be saved" });
+//       }
+//     }
+//   )
+// );
+
+// //sign in passport
+// passport.use(
+//   "local-login",
+//   new LocalStrategy.Strategy(
+//     {
+//       usernameField: "userSigninName",
+//       passwordField: "userSigninPassword",
+//       passReqToCallback: true,
+//     },
+//     async (req, userSigninName, userSigninPassword, done) => {
+//       try {
+//         // Get user details from the database
+//         const user = await User.findOne({ userName: userSigninName });
+
+//         if (!user) {
+//           // User not found
+//           return done(null, false, { message: "User not found" });
+//         }
+
+//         // Compare the password provided with the one in the database
+//         const match = await bcrypt.compare(
+//           userSigninPassword,
+//           user.userPassword
+//         );
+
+//         if (!match) {
+//           // Password does not match
+//           return done(null, false, { message: "Incorrect password" });
+//         }
+
+//         // Return the user to the passport session
+//         return done(null, user);
+//       } catch (error) {
+//         // Error occurred
+//         return done(error, false, {
+//           message: "There was a problem signing you in",
+//         });
+//       }
+//     }
+//   )
+// );
+
+// //passport serialization
+
+// passport.serializeUser((user, done) => {
+//   done(null, user.id);
+// });
+
+// passport.deserializeUser(async (id, done) => {
+//   try {
+//     const user = await User.findById(id);
+//     done(null, user);
+//   } catch (error) {
+//     done(error);
+//   }
+// });

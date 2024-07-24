@@ -1,0 +1,250 @@
+//jwt implementation for authentication
+import {
+  express,
+  session,
+  axios,
+  User,
+  connectDB,
+  configDotenv,
+  cors,
+  fs,
+  https,
+  path,
+  jwt,
+  bcrypt,
+  fileURLToPath,
+  nodemailer,
+} from "./global/global-app-export.js";
+configDotenv();
+
+// initialize the express app
+const app = express();
+
+//define fileName and pathName since they are not defined on ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+//define key path separately and join them
+const keyPath = path.join(__dirname, "keys", "private.key");
+const certPath = path.join(__dirname, "keys", "cert.pem");
+
+//server port
+const PORT = process.env.PORT || 4000;
+
+//key and cert
+const keys = fs.readFileSync(keyPath, "utf-8");
+const certs = fs.readFileSync(certPath, "utf-8");
+
+// https keys and certs
+const options = {
+  key: keys,
+  cert: certs,
+};
+
+//use cors for cross origin resource sharing
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
+
+//create an https connection using the keys and cert generated
+const server = https.createServer(options, app);
+
+// use middleware for data parsing
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+//cors definition for project
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
+
+//initialize the session
+app.use(
+  session({
+    secret: "Blugle-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
+  })
+);
+
+connectDB();
+
+//signup api route definitions using jwt
+app.post("/api/signup", async (req, res) => {
+  //try-catch block to handle async function
+  try {
+    //get user details from the frontend
+    const {
+      userFirstName,
+      userLastName,
+      userName,
+      userPassword,
+      userEmail,
+      userPhone,
+      userAddress,
+    } = req.body;
+    //encrypt the user password with bcrypt
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const encryptedPassword = await bcrypt.hash(userPassword, salt);
+
+    //check for existing users in the database
+    const existingUser = await User.findOne({ userName });
+    //conditionally check if existingUser is not null
+    if (existingUser) {
+      const existingPassword = existingUser.userPassword;
+      //compare user password with hashed password
+      const equalPasswords = await bcrypt.compare(
+        userPassword,
+        existingPassword
+      );
+      if (equalPasswords === true || existingUser.userEmail === userEmail) {
+        console.log("The user already exists");
+        res.send("The user already exists");
+      }
+    }
+
+    //save new users in the database if they are not already in the system
+    else {
+      const newUser = new User({
+        userFirstName,
+        userLastName,
+        userName,
+        userPassword: encryptedPassword,
+        userEmail,
+        userPhone,
+        userAddress,
+      });
+      //save the newUser data to the database
+      await newUser.save();
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An internal server error occured." });
+  }
+});
+
+//token verification function
+const verifyToken = (req, res, next) => {
+  //token secret for verification
+  const jwtTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+
+  //split the header of the request to get the token
+  const headerToken = req.headers["Authorization"]?.split(" ")[1];
+
+  if (!headerToken) {
+    res.json({ message: "The header token is not provided" });
+  }
+
+  //verify jwt token from the client
+  jwt.verify(headerToken, jwtTokenSecret, (err) => {
+    if (err) {
+      res
+        .status(400)
+        .json("There was an error encountered during the verification", err);
+    }
+    next();
+  });
+};
+
+//post request to authenticate user login
+app.post("/api/login", async (req, res) => {
+  try {
+    //extract user credentials from the client sign in page
+    const { userEmail, userPassword } = req.body;
+    //retrieve the user details from the database for comparison with entered details
+    const user = await User.findOne({ userEmail });
+
+    //check if the User object is not empty
+    if (user) {
+      //compare incoming password with hashed password
+      const hashedPassword = user.userPassword;
+
+      const comparePasswords = await bcrypt.compare(
+        userPassword,
+        hashedPassword
+      );
+
+      if (comparePasswords && userEmail) {
+        //get user email from the database
+        const userDatabaseEmail = user.userEmail;
+        //jwt payload
+        const jwtPayLoad = {
+          userId: user._id,
+          userEmails: userDatabaseEmail,
+        };
+
+        //jwt token secret
+        const jwtTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+        //sign the user details with a jwt key
+        jwt.sign(jwtPayLoad, jwtTokenSecret, (err, secretToken) => {
+          if (err) {
+            res.status(500).json({
+              message: "There was an error generating a token for the client",
+              err,
+            });
+          } else {
+            console.log(secretToken);
+            res.status(200).json({ token: secretToken });
+          }
+        });
+      } else {
+        res.status(401).json({ message: "User not in the system" });
+      }
+      //compare user details to see if it is in the database
+      // if (user.userEmail !== userEmail || comparePasswords === false) {
+      //   res.json({ message: "The user is not in the system" });
+      //   console.log("The user is not in the system");
+      // } else {
+      //   console.log("Login successful");
+      // }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+//handle email submission
+app.post("/api/email", (req, res) => {
+  const { messageSender, senderEmail, messageSubject, messageBody } = req.body;
+  const transporter = nodemailer.createTransport({
+    pool: true,
+    service: "Gmail",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_ADDRESS,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+  try {
+    const mailOptions = {
+      from: messageSender,
+      to: process.env.EMAIL_ADDRESS,
+      subject: messageSubject,
+      text: messageBody,
+    };
+
+    //send email to the recipient using nodemailer
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        res
+          .status(500)
+          .json({ message: "An error occured while sending the email", err });
+      }
+      res.status(200).json({ message: "Email sent successfully", info });
+    });
+  } catch (error) {
+    console.error(error);
+  }
+});
+//server port
+app.listen(PORT, () => {
+  console.log(`Server started on ${PORT}`);
+});
