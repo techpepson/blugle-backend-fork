@@ -12,7 +12,7 @@ const uri = process.env.PRODUCTION_CONNECTION_STRING;
 export const connectDB = async () => {
   try {
     await mongoose.connect(uri, {
-      tls: false,
+      tls: true,
     });
     console.log("Connection to the database was successfull");
   } catch (error) {
