@@ -6,7 +6,7 @@ import { configDotenv } from "dotenv";
 configDotenv();
 
 //connectionString defined  here
-const uri = process.env.DEVELOPMENT_CONNECTION_STRING;
+const uri = process.env.PRODUCTION_CONNECTION_STRING;
 
 //async function to connect to the database
 export const connectDB = async () => {
