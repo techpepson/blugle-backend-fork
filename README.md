@@ -1,2 +1,5 @@
 # blugle-backend
-The backend logic implementation for the blugle medical services software
+
+The backend logic implementation for the blugle medical services software;
+
+# Project Setup
