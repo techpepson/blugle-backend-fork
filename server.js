@@ -53,7 +53,7 @@ app.use(express.json());
 //cors definition for project
 app.use(
   cors({
-    origin: "https://blugle-rcdo.vercel.app",
+    origin: "https://blugle-rcdo.vercel.app/",
   })
 );
 
