@@ -43,12 +43,6 @@ const options = {
 
 //use cors for cross origin resource sharing
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-  })
-);
-
 //create an https connection using the keys and cert generated
 const server = https.createServer(options, app);
 
@@ -105,9 +99,8 @@ app.post("/api/signup", async (req, res) => {
         existingPassword
       );
       if (equalPasswords === true || existingUser.userEmail === userEmail) {
-        console.log("The user already exists");
-        res.send("The user already exists");
       }
+      res.status(200).json({ message: "The request was successfull" });
     }
 
     //save new users in the database if they are not already in the system
@@ -174,6 +167,8 @@ app.post("/api/login", async (req, res) => {
       if (comparePasswords && userEmail) {
         //get user email from the database
         const userDatabaseEmail = user.userEmail;
+        //get user role
+        const role = user.userRole;
         //jwt payload
         const jwtPayLoad = {
           userId: user._id,
@@ -191,7 +186,7 @@ app.post("/api/login", async (req, res) => {
             });
           } else {
             console.log(secretToken);
-            res.status(200).json({ token: secretToken });
+            res.status(200).json({ token: secretToken, userRole: role });
           }
         });
       } else {
