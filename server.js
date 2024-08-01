@@ -1,4 +1,4 @@
-//jwt implementation for authentication
+import { Appointment } from "./databases/Schemas/appointmentSchema.js";
 import {
   express,
   session,
@@ -239,6 +239,47 @@ app.post("/api/email", (req, res) => {
     console.error(error);
   }
 });
+
+//get request to retrieve all appointments
+app.get("/appointments", async (req, res) => {
+  try {
+    const appointments = await Appointment.find();
+    res.status(200).json(appointments);
+  } catch (error) {
+    res.status(500).send("Error retrieving appointments");
+  }
+});
+
+// Route to handle appointment bookings
+app.post("/book-appointment", async (req, res) => {
+  const {
+    fullName,
+    email,
+    phone,
+    appointmentDate,
+    appointmentTime,
+    reason,
+    notes,
+  } = req.body;
+
+  try {
+    const newAppointment = new Appointment({
+      fullName,
+      email,
+      phone,
+      appointmentDate,
+      appointmentTime,
+      reason,
+      notes,
+    });
+
+    await newAppointment.save();
+    res.status(201).send("Appointment booked successfully");
+  } catch (error) {
+    res.status(500).send("Error booking appointment");
+  }
+});
+
 //server port
 app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);

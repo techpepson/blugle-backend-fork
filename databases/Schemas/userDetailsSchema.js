@@ -38,3 +38,4 @@ export const userDetails = new mongoose.Schema({
     required: false,
   },
 });
+
