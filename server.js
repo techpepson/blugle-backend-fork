@@ -25,20 +25,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 //define key path separately and join them
-const keyPath = path.join(__dirname, "keys", "private.key");
-const certPath = path.join(__dirname, "keys", "cert.pem");
+// const keyPath = path.join(__dirname, "keys");
+// const certPath = path.join(__dirname, "keys");
 
 //server port
 const PORT = process.env.PORT || 4000;
 
-//key and cert
-const keys = fs.readFileSync(keyPath, "utf-8");
-const certs = fs.readFileSync(certPath, "utf-8");
+const key = fs.readFileSync(path.resolve(process.env.KEY), "utf8");
+const cert = fs.readFileSync(path.resolve(process.env.CERTIFICATE), "utf8");
 
 // https keys and certs
 const options = {
-  key: keys,
-  cert: certs,
+  key: key,
+  cert: cert,
 };
 
 //use cors for cross origin resource sharing
