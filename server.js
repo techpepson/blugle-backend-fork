@@ -1,4 +1,4 @@
-//jwt implementation for authentication
+import { Appointment } from "./databases/Schemas/appointmentSchema.js";
 import {
   express,
   session,
@@ -25,20 +25,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 //define key path separately and join them
-const keyPath = path.join(__dirname, "keys", "private.key");
-const certPath = path.join(__dirname, "keys", "cert.pem");
+// const keyPath = path.join(__dirname, "keys");
+// const certPath = path.join(__dirname, "keys");
 
 //server port
 const PORT = process.env.PORT || 4000;
 
-//key and cert
-const keys = fs.readFileSync(keyPath, "utf-8");
-const certs = fs.readFileSync(certPath, "utf-8");
+const key = fs.readFileSync(path.resolve(process.env.KEY), "utf8");
+const cert = fs.readFileSync(path.resolve(process.env.CERTIFICATE), "utf8");
 
 // https keys and certs
 const options = {
-  key: keys,
-  cert: certs,
+  key: key,
+  cert: cert,
 };
 
 //use cors for cross origin resource sharing
@@ -53,7 +52,7 @@ app.use(express.json());
 //cors definition for project
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://blugle-rcdo.vercel.app/",
   })
 );
 
@@ -239,6 +238,47 @@ app.post("/api/email", (req, res) => {
     console.error(error);
   }
 });
+
+//get request to retrieve all appointments
+app.get("/appointments", async (req, res) => {
+  try {
+    const appointments = await Appointment.find();
+    res.status(200).json(appointments);
+  } catch (error) {
+    res.status(500).send("Error retrieving appointments");
+  }
+});
+
+// Route to handle appointment bookings
+app.post("/book-appointment", async (req, res) => {
+  const {
+    fullName,
+    email,
+    phone,
+    appointmentDate,
+    appointmentTime,
+    reason,
+    notes,
+  } = req.body;
+
+  try {
+    const newAppointment = new Appointment({
+      fullName,
+      email,
+      phone,
+      appointmentDate,
+      appointmentTime,
+      reason,
+      notes,
+    });
+
+    await newAppointment.save();
+    res.status(201).send("Appointment booked successfully");
+  } catch (error) {
+    res.status(500).send("Error booking appointment");
+  }
+});
+
 //server port
 app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);

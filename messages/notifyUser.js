@@ -33,7 +33,7 @@ const alertClient = async (to, body) => {
 
 //setup cron-job to handle event scheduling
 
-const scheduleNotification = (hour, day, month, phone) => {
+export const scheduleNotification = (hour, day, month, phone) => {
   const cronSchedule = `0 ${hour} ${day} ${month} 0`;
   try {
     crone.schedule(cronSchedule, async () => {
@@ -49,14 +49,14 @@ const scheduleNotification = (hour, day, month, phone) => {
 
 //get user details for storage into the database
 //Note how we do not make too many detches from the database since that can over-populate the sever. So we create functions and use them dynamically.
-app.post("/api/set-notification", async (req, res) => {
-  const { hour, day, month, phone } = req.body;
-  try {
-    const saveNotificationDetails = new User({ hour, day, month, phone });
-    await saveNotificationDetails.save();
-    scheduleNotification(hour, day, month, phone);
-    res.status(200).send("Congratulations, your setup is successfull");
-  } catch (error) {
-    res.status(501).send("There was an error setting up your notification");
-  }
-});
+// app.post("/api/set-notification", async (req, res) => {
+//   const { hour, day, month, phone } = req.body;
+//   try {
+//     const saveNotificationDetails = new User({ hour, day, month, phone });
+//     await saveNotificationDetails.save();
+//     scheduleNotification(hour, day, month, phone);
+//     res.status(200).send("Congratulations, your setup is successfull");
+//   } catch (error) {
+//     res.status(501).send("There was an error setting up your notification");
+//   }
+// });
