@@ -48,15 +48,14 @@ const server = https.createServer(options, app);
 // use middleware for data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+//cors options
+const corsOption = {
+  origin: ["https://blugle-rcdo.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+};
 
 //cors definition for project
-app.use(
-  cors({
-    origin: ["https://blugle-rcdo.vercel.app"],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use(cors(corsOption));
 
 //initialize the session
 app.use(
@@ -242,7 +241,7 @@ app.post("/api/email", (req, res) => {
 });
 
 //get request to retrieve all appointments
-app.get("/appointments", async (req, res) => {
+app.get("/api/appointments", async (req, res) => {
   try {
     const appointments = await Appointment.find();
     res.status(200).json(appointments);
@@ -252,7 +251,7 @@ app.get("/appointments", async (req, res) => {
 });
 
 // Route to handle appointment bookings
-app.post("/book-appointment", async (req, res) => {
+app.post("/api/book-appointment", async (req, res) => {
   const {
     fullName,
     email,

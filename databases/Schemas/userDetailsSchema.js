@@ -5,16 +5,16 @@ import mongoose from "mongoose";
 export const userDetails = new mongoose.Schema({
   userFirstName: {
     type: String,
-    required: true,
+    required: false,
   },
   userLastName: {
     type: String,
-    required: true,
+    required: false,
   },
 
   userName: {
     type: String,
-    required: true,
+    required: false,
   },
   userPassword: {
     type: String || Number,
@@ -26,11 +26,11 @@ export const userDetails = new mongoose.Schema({
   },
   userPhone: {
     type: Number,
-    required: true,
+    required: false,
   },
   userAddress: {
     type: String,
-    required: true,
+    required: false,
   },
   userRole: {
     type: String,
