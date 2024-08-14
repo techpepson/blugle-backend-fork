@@ -34,7 +34,7 @@ export const userDetails = new mongoose.Schema({
   },
   userRole: {
     type: String,
-    default: "patient |",
+    default: "patient",
     required: false,
   },
 });

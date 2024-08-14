@@ -82,6 +82,7 @@ app.post("/api/signup", async (req, res) => {
       userEmail,
       userPhone,
       userAddress,
+      userRole,
     } = req.body;
     //encrypt the user password with bcrypt
     const saltRounds = 10;
@@ -113,6 +114,7 @@ app.post("/api/signup", async (req, res) => {
         userEmail,
         userPhone,
         userAddress,
+        userRole,
       });
       //save the newUser data to the database
       await newUser.save();
