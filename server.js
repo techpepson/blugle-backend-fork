@@ -282,6 +282,16 @@ app.post("/api/book-appointment", async (req, res) => {
   }
 });
 
+//get users in the system
+
+app.get("/api/get-users", async (req, res) => {
+  try {
+    const users = await User.findOne({ userEmail });
+    users && res.status(200).json({ userData: users });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 //server port
 app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);
