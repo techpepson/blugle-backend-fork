@@ -287,7 +287,7 @@ app.get("/api/get-users", async (req, res) => {
   try {
     const users = await User.find(); // Fetch all users
     if (users && users.length > 0) {
-      res.status(200).json(users);
+      res.status(200).json({ users });
       console.log("Users retrieved successfully");
     } else {
       res.status(404).json({ message: "No users found" });
