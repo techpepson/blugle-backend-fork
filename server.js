@@ -110,7 +110,7 @@ app.post("/api/signup", async (req, res) => {
         userFirstName,
         userLastName,
         userName,
-        userPassword: encryptedPassword,
+        userPassword,
         userEmail,
         userPhone,
         userAddress,
