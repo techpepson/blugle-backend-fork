@@ -272,7 +272,7 @@ app.post("/api/book-appointment", async (req, res) => {
       appointmentDate,
       appointmentTime,
       reason,
-      doctorSelected, 
+      doctorSelected,
     });
 
     await newAppointment.save();
@@ -299,6 +299,16 @@ app.get("/api/get-users", async (req, res) => {
     } else {
       res.status(404).json({ message: "No users found" });
     }
+  } catch (error) {
+    console.error("Error retrieving users:", error);
+    res.status(500).json({ message: "An internal server error occurred." });
+  }
+});
+//get apppointments in the system
+app.get("/api/get-appointments", async (req, res) => {
+  try {
+    const users = await Appointment.find(); // Fetch all users
+    res.json({ users });
   } catch (error) {
     console.error("Error retrieving users:", error);
     res.status(500).json({ message: "An internal server error occurred." });
