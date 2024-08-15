@@ -285,7 +285,7 @@ app.post("/api/book-appointment", async (req, res) => {
 //get users in the system
 app.get("/api/get-users", async (req, res) => {
   try {
-    const users = await User.findOne({ userEmail });
+    const users = await User.find({ userEmail });
     if (users) {
       res.status(200).json(users);
       console.log("User found!");
