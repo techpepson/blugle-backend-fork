@@ -285,17 +285,19 @@ app.post("/api/book-appointment", async (req, res) => {
 //get users in the system
 app.get("/api/get-users", async (req, res) => {
   try {
-    const users = await User.find({ userEmail });
-    if (users) {
+    const users = await User.find(); // Fetch all users
+    if (users && users.length > 0) {
       res.status(200).json(users);
-      console.log("User found!");
+      console.log("Users retrieved successfully");
     } else {
-      console.log("There was an error sending the user details.");
+      res.status(404).json({ message: "No users found" });
     }
   } catch (error) {
-    res.status(500).json({ message: error });
+    console.error("Error retrieving users:", error);
+    res.status(500).json({ message: "An internal server error occurred." });
   }
 });
+
 //server port
 app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);
