@@ -286,10 +286,15 @@ app.post("/api/book-appointment", async (req, res) => {
 app.get("/api/get-users", async (req, res) => {
   try {
     const users = await User.find(); // Fetch all users
-    if (users) {
-      if(users.userRole === "patient"){
-        res.json({ users });
+    if (users && users.length > 0) {
+      // Filter users by userRole
+      const filteredUsers = users.filter((user) => user.userRole === "patient");
+
+      if (filteredUsers.length > 0) {
+        res.status(200).json({ users: filteredUsers });
         console.log("Users retrieved successfully");
+      } else {
+        res.status(404).json({ message: "No patients found" });
       }
     } else {
       res.status(404).json({ message: "No users found" });
