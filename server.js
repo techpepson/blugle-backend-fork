@@ -283,16 +283,17 @@ app.post("/api/book-appointment", async (req, res) => {
 });
 
 //get users in the system
-
 app.get("/api/get-users", async (req, res) => {
   try {
     const users = await User.findOne({ userEmail });
     if (users) {
-      console.log("User found!");
       res.status(200).json(users);
+      console.log("User found!");
+    } else {
+      console.log("There was an error sending the user details.");
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error });
   }
 });
 //server port
