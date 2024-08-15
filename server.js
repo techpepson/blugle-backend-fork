@@ -286,9 +286,11 @@ app.post("/api/book-appointment", async (req, res) => {
 app.get("/api/get-users", async (req, res) => {
   try {
     const users = await User.find(); // Fetch all users
-    if (users && users.userRole === "patient") {
-      res.json({ users });
-      console.log("Users retrieved successfully");
+    if (users) {
+      if(users.userRole === "patient"){
+        res.json({ users });
+        console.log("Users retrieved successfully");
+      }
     } else {
       res.status(404).json({ message: "No users found" });
     }
