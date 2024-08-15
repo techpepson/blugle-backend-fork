@@ -286,7 +286,7 @@ app.post("/api/book-appointment", async (req, res) => {
 app.get("/api/get-users", async (req, res) => {
   try {
     const users = await User.find(); // Fetch all users
-    if (users && users.length > 0) {
+    if (users.userRole === "patient" && users.length > 0) {
       res.json({ users });
       console.log("Users retrieved successfully");
     } else {
