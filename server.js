@@ -166,7 +166,7 @@ app.post("/api/login", async (req, res) => {
         hashedPassword
       );
 
-      if (userEmail) {
+      if (comparePasswords && userEmail) {
         //get user email from the database
         const userDatabaseEmail = user.userEmail;
         //get user role

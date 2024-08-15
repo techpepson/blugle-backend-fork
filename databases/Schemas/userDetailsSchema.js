@@ -18,7 +18,7 @@ export const userDetails = new mongoose.Schema({
   },
   userPassword: {
     type: String || Number,
-    required: false,
+    required: true,
   },
   userEmail: {
     type: String,
