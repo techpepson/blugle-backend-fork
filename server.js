@@ -289,7 +289,7 @@ app.get("/api/get-users", async (req, res) => {
     const users = await User.findOne({ userEmail });
     if (users) {
       console.log("User found!");
-      res.status(200).json({ userData: users });
+      res.status(200).json(users);
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
