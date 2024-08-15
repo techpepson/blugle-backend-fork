@@ -294,7 +294,7 @@ app.get("/api/get-users", async (req, res) => {
         res.status(200).json({ users: filteredUsers });
         console.log("Users retrieved successfully");
       } else {
-        res.status(404).json({ message: "No patients found" });
+        res.status(404).json({ message: "No patients found." });
       }
     } else {
       res.status(404).json({ message: "No users found" });
