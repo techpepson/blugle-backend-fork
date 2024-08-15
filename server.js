@@ -261,7 +261,7 @@ app.post("/api/book-appointment", async (req, res) => {
     appointmentDate,
     appointmentTime,
     reason,
-    notes,
+    doctorSelected,
   } = req.body;
 
   try {
@@ -272,7 +272,7 @@ app.post("/api/book-appointment", async (req, res) => {
       appointmentDate,
       appointmentTime,
       reason,
-      notes,
+      doctorSelected, 
     });
 
     await newAppointment.save();

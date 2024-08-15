@@ -1,5 +1,5 @@
 //appointment booking schema
-import mongoose from "mongoose";  
+import mongoose from "mongoose";
 const appointmentSchema = new mongoose.Schema({
   fullName: String,
   email: String,
@@ -7,7 +7,7 @@ const appointmentSchema = new mongoose.Schema({
   appointmentDate: Date,
   appointmentTime: String,
   reason: String,
-  notes: String,
+  doctorSelected: String,
 });
 
 //model of the database for appointment booking
