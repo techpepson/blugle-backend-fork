@@ -33,6 +33,7 @@ const corsOption = {
   origin: "https://blugle-rcdo.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  "Access-Control-Allow-Origin": "https://blugle-rcdo.vercel.app",
 };
 
 //cors definition for project
@@ -347,9 +348,10 @@ app.post("/api/payment", async (req, res) => {
         },
       }
     );
+    res.header("Access-Control-Allow-Origin", "https://blugle-rcdo.vercel.app");
     const authUrl = response.data.data.authorization_url;
     res.status(200).json(authUrl);
-    
+    console.log(authUrl);
   } catch (error) {
     res
       .status(500)
