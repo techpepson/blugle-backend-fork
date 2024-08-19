@@ -111,6 +111,10 @@ app.post("/api/signup", async (req, res) => {
       );
       if (equalPasswords === true || existingUser.userEmail === userEmail) {
       }
+      res.header(
+        "Access-Control-Allow-Origin",
+        "https://blugle-rcdo.vercel.app"
+      );
       res.status(200).json({ message: "The request was successfull" });
     }
 
