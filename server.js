@@ -38,7 +38,13 @@ const corsOption = {
 //cors definition for project
 app.use(cors(corsOption));
 
-app.options("*", cors(corsOptions)); // Allow preflight requests from any route
+app.options("*", (req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://blugle-rcdo.vercel.app");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.sendStatus(200); // Send 200 OK for preflight
+  next();
+});
 
 //server port
 const PORT = process.env.PORT || 4000;
@@ -105,6 +111,10 @@ app.post("/api/signup", async (req, res) => {
       );
       if (equalPasswords === true || existingUser.userEmail === userEmail) {
       }
+      res.header(
+        "Access-Control-Allow-Origin",
+        "https://blugle-rcdo.vercel.app"
+      );
       res.status(200).json({ message: "The request was successfull" });
     }
 
