@@ -359,6 +359,6 @@ app.get("/api/get-appointments", async (req, res) => {
 //   }
 // });
 //server port
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);
 });
