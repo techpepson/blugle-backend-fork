@@ -349,6 +349,7 @@ app.post("/api/payment", async (req, res) => {
     );
     const authUrl = response.data.data.authorization_url;
     res.status(200).json(authUrl);
+    
   } catch (error) {
     res
       .status(500)
@@ -356,6 +357,6 @@ app.post("/api/payment", async (req, res) => {
   }
 });
 //server port
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);
 });
