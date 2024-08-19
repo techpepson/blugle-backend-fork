@@ -30,9 +30,9 @@ const __dirname = path.dirname(__filename);
 
 //cors options
 const corsOption = {
-  origin: ["https://blugle-rcdo.vercel.app"],
+  origin: "https://blugle-rcdo.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: "*",
 };
 
 //cors definition for project
