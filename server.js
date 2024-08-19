@@ -33,7 +33,7 @@ const corsOption = {
   origin: "https://blugle-rcdo.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  "Access-Control-Allow-Origin": "https://blugle-rcdo.vercel.app",
+  // "Access-Control-Allow-Origin": "https://blugle-rcdo.vercel.app",
 };
 
 //cors definition for project
@@ -331,33 +331,33 @@ app.get("/api/get-appointments", async (req, res) => {
 });
 
 //payment route
-app.post("/api/payment", async (req, res) => {
-  const { amount, email } = req.body;
-  const secretKey = process.env.PAYSTACK_SECRET_KEY;
-  try {
-    const response = await axios.post(
-      "https://api.paystack.co/transaction/initialize",
-      {
-        amount,
-        email,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${secretKey}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    res.header("Access-Control-Allow-Origin", "https://blugle-rcdo.vercel.app");
-    const authUrl = response.data.data.authorization_url;
-    res.status(200).json(authUrl);
-    console.log(authUrl);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "An error occurred while processing payment" });
-  }
-});
+// app.post("/api/payment", async (req, res) => {
+//   const { amount, email } = req.body;
+//   const secretKey = process.env.PAYSTACK_SECRET_KEY;
+//   try {
+//     const response = await axios.post(
+//       "https://api.paystack.co/transaction/initialize",
+//       {
+//         amount,
+//         email,
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${secretKey}`,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+//     res.header("Access-Control-Allow-Origin", "https://blugle-rcdo.vercel.app");
+//     const authUrl = response.data.data.authorization_url;
+//     res.status(200).json(authUrl);
+//     console.log(authUrl);
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "An error occurred while processing payment" });
+//   }
+// });
 //server port
 server.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);
