@@ -28,6 +28,24 @@ const __dirname = path.dirname(__filename);
 // const keyPath = path.join(__dirname, "keys");
 // const certPath = path.join(__dirname, "keys");
 
+//cors options
+const corsOption = {
+  origin: "https://blugle-rcdo.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+//cors definition for project
+app.use(cors(corsOption));
+
+// app.options("*", (req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "https://blugle-rcdo.vercel.app");
+//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+//   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   res.sendStatus(200); // Send 200 OK for preflight
+//   next();
+// });
+
 //server port
 const PORT = process.env.PORT || 4000;
 
@@ -48,14 +66,6 @@ const server = https.createServer(options, app);
 // use middleware for data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-//cors options
-const corsOption = {
-  origin: ["https://blugle-rcdo.vercel.app"],
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-};
-
-//cors definition for project
-app.use(cors(corsOption));
 
 //initialize the session
 app.use(
