@@ -50,9 +50,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 //cors options
 const corsOption = {
-  origin: "https://blugle-rcdo.vercel.app/",
+  origin: "https://blugle-rcdo.vercel.app", // Remove trailing slash
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Authorization", "Content-Type"], // Ensure you specify the headers if they are custom
+  credentials: true, // If you need to send cookies or other credentials
 };
+
+app.options("*", cors(corsOption));
 
 //cors definition for project
 app.use(cors(corsOption));
