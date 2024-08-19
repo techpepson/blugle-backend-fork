@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 //cors options
 const corsOption = {
-  origin: ["https://blugle-rcdo.vercel.app"],
+  origin: "https://blugle-rcdo.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 };
 
