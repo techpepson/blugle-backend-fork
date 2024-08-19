@@ -325,69 +325,7 @@ app.get("/api/get-appointments", async (req, res) => {
   }
 });
 
-// paystack integration route definition
-app.post("/api/payment-initialize", async (req, res) => {
-  const { userAmount, email } = req.body;
-  const amount = userAmount * 100;
-
-  try {
-    const response = await axios.post(
-      "https://api.paystack.co/transaction/initialize",
-      { amount, email, channels: ["mobile_money", "card"] },
-      {
-        headers: {
-          Authorization: `Bearer sk_test_d510231535ea62d7708835134b7fe472798b8314`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const payStackResponse = response.data.reference;
-    const authorizationUrl = payStackResponse.authorization_url;
-    if (payStackResponse.status) {
-      res.status(200).json(payStackResponse, authorizationUrl);
-    } else {
-      res.status(400).json({
-        message: "Initialization failed",
-        data: payStackResponse.data,
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      message: "There was an error processing your request",
-      error: error.message,
-    });
-  }
-});
-
-//payment verification path definition
-app.get("/paystack/verify/:reference", async (req, res) => {
-  const { reference } = req.params;
-  try {
-    const responseFromFetch = await axios.get(
-      `https://api.paystack.co/transaction/verify/${reference}`,
-      {
-        headers: {
-          Authorization: `Bearer sk_test_d510231535ea62d7708835134b7fe472798b8314`,
-        },
-      }
-    );
-
-    const response = responseFromFetch.message;
-    if (responseFromFetch.status === true) {
-      res.status(200).json({ data: response.data });
-    } else {
-      res.status(500).json({ message: "Verification failed", data: response });
-    }
-  } catch (error) {
-    res.status(500).json({
-      message: "There was an error processing your request",
-      error: error.message,
-    });
-  }
-});
-
 //server port
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);
 });
