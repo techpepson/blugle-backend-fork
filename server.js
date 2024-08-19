@@ -56,8 +56,6 @@ const corsOption = {
   credentials: true, // If you need to send cookies or other credentials
 };
 
-app.options("*", cors(corsOption));
-
 //cors definition for project
 app.use(cors(corsOption));
 
@@ -104,8 +102,8 @@ app.post("/api/signup", async (req, res) => {
         existingPassword
       );
       if (equalPasswords === true || existingUser.userEmail === userEmail) {
+        res.status(200).json({ message: "The request was successfull" });
       }
-      res.status(200).json({ message: "The request was successfull" });
     }
 
     //save new users in the database if they are not already in the system
