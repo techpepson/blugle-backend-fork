@@ -329,6 +329,32 @@ app.get("/api/get-appointments", async (req, res) => {
   }
 });
 
+//payment route
+app.post("/api/payment", async (req, res) => {
+  const { amount, email } = req.body;
+  const secretKey = process.env.PAYSTACK_SECRET_KEY;
+  try {
+    const response = await axios.post(
+      "https://api.paystack.co/transaction/initialize",
+      {
+        amount,
+        email,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${secretKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const authUrl = response.data.data.authorization_url;
+    res.status(200).json(authUrl);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "An error occurred while processing payment" });
+  }
+});
 //server port
 app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);
