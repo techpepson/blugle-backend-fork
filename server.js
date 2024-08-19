@@ -37,6 +37,9 @@ const corsOption = {
 
 //cors definition for project
 app.use(cors(corsOption));
+
+app.options("*", cors(corsOptions)); // Allow preflight requests from any route
+
 //server port
 const PORT = process.env.PORT || 4000;
 
